@@ -1,13 +1,15 @@
 const Bootcamp = require('../models/Bootcamp');
 const bootcampdb = require(`../models/Bootcamp`);
 const { all } = require('../routes/bootcamps');
-const errorres = require('../utils/errorres');
+const geocoder = require('../utils/geocoder');
+// const errorres = require('../utils/errorres');
 
 // GET
 // public
 // get all bootcamps
 exports.getBootcamps = async (req, res, next) => {
   try {
+    console.log(req.query);
     const allbootcamps = await bootcampdb.find();
     res.status(200).json({
       message: `get all bootcamps`,
@@ -15,7 +17,7 @@ exports.getBootcamps = async (req, res, next) => {
       data: allbootcamps,
     });
   } catch (error) {
-    res.status(400).json({ message: `Cannot get data from database` });
+    next(error);
   }
 };
 
@@ -26,16 +28,14 @@ exports.getBootcamp = async (req, res, next) => {
   try {
     const bootcampbyid = await bootcampdb.findById(req.params.id);
     if (bootcampbyid === null) {
-      return res
-        .status(400)
-        .json({ message: `no bootcamp found with id: ${req.params.id}` });
+      next(error);
     }
     res.status(200).json({
       message: `get bootcamp by id ${req.params.id}`,
       data: bootcampbyid,
     });
   } catch (error) {
-    next(new errorres(`Data not found `, 404));
+    next(error);
     // res.status(400).json({ message: `Cannot get data from database` });
   }
 };
@@ -48,7 +48,7 @@ exports.createBootcamp = async (req, res, next) => {
     const result = await bootcampdb.create(req.body);
     res.status(200).json({ message: `create a new bootcamp`, data: result });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -63,7 +63,7 @@ exports.updateBootcamp = async (req, res, next) => {
       data: data,
     });
   } catch (error) {
-    res.status(400).json({ message: `Something went wrong` });
+    next(error);
   }
 };
 
@@ -81,6 +81,31 @@ exports.deleteBootcamp = async (req, res, next) => {
       data: result,
     });
   } catch (error) {
-    res.status(400).json({ message: `Something went wrong` });
+    next(error);
+  }
+};
+
+// GET
+// public
+// get all bootcamps in radius
+exports.getBootcampsinRadius = async (req, res, next) => {
+  try {
+    const { zipcode, distance } = req.params;
+    const location = await geocoder.geocode(zipcode);
+    const latitude = location[0].latitude;
+    const longitude = location[0].longitude;
+
+    const radius = distance / 3963;
+    const bootcampsinRadius = await Bootcamp.find({
+      location: {
+        $geoWithin: { $centerSphere: [[longitude, latitude], radius] },
+      },
+    });
+
+    res
+      .status(200)
+      .json({ count: bootcampsinRadius.length, data: bootcampsinRadius });
+  } catch (error) {
+    next(error);
   }
 };
