@@ -1,26 +1,31 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const morgan = require("morgan");
+const express = require('express');
+const dotenv = require('dotenv');
+const morgan = require('morgan');
 const connectDB = require('./config/db');
 
 // Load env vars
-dotenv.config({ path: "./config/config.env" });
+dotenv.config({ path: './config/config.env' });
 
-// Connect woth Database
+// Connect with Database
 connectDB();
 
-const bootcamps = require("./routes/bootcamps");
-const { connect } = require("mongoose");
+const bootcamps = require('./routes/bootcamps');
+const { connect } = require('mongoose');
 
 const app = express();
 
+// Middleware
+// body-parser
+
+app.use(express.json());
+
 // Logging middleware (I'm using morgan as it is light weight and saves the trouble for writing my custom middleware)
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
 }
 
 // Mount Routers
-app.use("/api/v1/bootcamps", bootcamps);
+app.use('/api/v1/bootcamps', bootcamps);
 
 const PORT = process.env.PORT || 5000;
 
