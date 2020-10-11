@@ -1,6 +1,7 @@
 const Bootcamp = require('../models/Bootcamp');
 const bootcampdb = require(`../models/Bootcamp`);
 const { all } = require('../routes/bootcamps');
+const errorres = require('../utils/errorres');
 
 // GET
 // public
@@ -34,7 +35,8 @@ exports.getBootcamp = async (req, res, next) => {
       data: bootcampbyid,
     });
   } catch (error) {
-    res.status(400).json({ message: `Cannot get data from database` });
+    next(new errorres(`Data not found`, 404));
+    // res.status(400).json({ message: `Cannot get data from database` });
   }
 };
 
