@@ -35,7 +35,7 @@ exports.getBootcamp = async (req, res, next) => {
       data: bootcampbyid,
     });
   } catch (error) {
-    next(new errorres(`Data not found`, 404));
+    next(new errorres(`Data not found `, 404));
     // res.status(400).json({ message: `Cannot get data from database` });
   }
 };
