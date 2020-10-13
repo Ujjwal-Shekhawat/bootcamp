@@ -106,21 +106,22 @@ BootcampSchema.pre('save', function (next) {
   next();
 });
 
-BootcampSchema.pre('save', async function (next) {
-  console.log(`Geco coding now`);
-  const location = await geocoder.geocode(this.address);
-  this.location = {
-    type: 'Point',
-    coordinates: [location[0].longitude, location[0].latitude],
-    formattedAddress: location[0].formattedAddress,
-    street: location[0].streetName,
-    city: location[0].city,
-    state: location[0].state,
-    zipcode: location[0].zipcode,
-    country: location[0].countryCode,
-  };
-  console.log(`Geco coding done`);
-  next();
-});
+// Temporary ban
+// BootcampSchema.pre('save', async function (next) {
+//   console.log(`Geco coding now`);
+//   const location = await geocoder.geocode(this.address);
+//   this.location = {
+//     type: 'Point',
+//     coordinates: [location[0].longitude, location[0].latitude],
+//     formattedAddress: location[0].formattedAddress,
+//     street: location[0].streetName,
+//     city: location[0].city,
+//     state: location[0].state,
+//     zipcode: location[0].zipcode,
+//     country: location[0].countryCode,
+//   };
+//   console.log(`Geco coding done`);
+//   next();
+// });
 
 module.exports = mongoose.model('Bootcamp', BootcampSchema);
