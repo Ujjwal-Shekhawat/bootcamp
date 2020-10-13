@@ -2,7 +2,6 @@ const Bootcamp = require('../models/Bootcamp');
 const bootcampdb = require(`../models/Bootcamp`);
 const { all } = require('../routes/bootcamps');
 const geocoder = require('../utils/geocoder');
-// const errorres = require('../utils/errorres');
 
 // GET
 // public
@@ -16,7 +15,9 @@ exports.getBootcamps = async (req, res, next) => {
     let query = JSON.stringify(req_query);
 
     query = query.replace(/\b(lt|lte|gt|gte|in)\b/g, (match) => `$${match}`);
-    let result = bootcampdb.find(JSON.parse(query));
+    let result = bootcampdb
+      .find(JSON.parse(query))
+      .populate({ path: 'Courses', select: 'scholarShipAvalable' });
 
     // Selecting specific feilds
     if (req.query.select) {
@@ -33,7 +34,7 @@ exports.getBootcamps = async (req, res, next) => {
     }
 
     // Pagination
-    const page = parseInt(req.query.page, 10) || 10;
+    const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
     const start = (page - 1) * limit;
     const end = page * limit;
@@ -120,10 +121,12 @@ exports.updateBootcamp = async (req, res, next) => {
 // delete bootcamp by its id
 exports.deleteBootcamp = async (req, res, next) => {
   try {
-    const result = await Bootcamp.findByIdAndDelete(req.params.id);
+    // Remove is neede for triggering middleware in bootcamp model
+    const result = await Bootcamp.findById(req.params.id);
     if (result === null) {
       return res.status(400).json({ message: `No such bootcamp found` });
     }
+    result.remove();
     res.status(200).json({
       message: `delete bootcamp with id ${req.params.id}`,
       data: result,
