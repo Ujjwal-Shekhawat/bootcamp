@@ -1,6 +1,8 @@
 const Bootcamp = require('../models/Bootcamp');
 const bootcampdb = require(`../models/Bootcamp`);
+const path = require('path');
 const { all } = require('../routes/bootcamps');
+const errorres = require('../utils/errorres');
 const geocoder = require('../utils/geocoder');
 
 // GET
@@ -159,4 +161,59 @@ exports.getBootcampsinRadius = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+// PUT
+// private
+// Upload image for bootcamp by its id
+exports.uploadPhotoforBootcamp = async (req, res, next) => {
+  const bootcamp = await Bootcamp.findById(req.params.id);
+
+  if (bootcamp === null) {
+    return next(
+      new errorres(`No bootcamp found with id : ${req.params.id}`, 404)
+    );
+  }
+
+  if (!req.files) {
+    return next(new errorres(`Please select a file to upload`, 400));
+  }
+
+  const file = req.files.image;
+  if (!file.mimetype.startsWith('image')) {
+    return next(new errorres(`please upload a image`, 400));
+  }
+  if (file.size > process.env.MAX_FILE_UPLOAD_SIZE) {
+    return next(
+      new errorres(
+        `cannot upload file. File too large : File size ${
+          (file.size / 1024) * 1024
+        } Mb. Allowed file size id upto 1 Mb`,
+        400
+      )
+    );
+  }
+
+  file.name = `photo_${req.params.id}${path.parse(file.name).ext}`;
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (error) => {
+    if (error) {
+      return next(
+        new errorres(
+          `Something went wrong while uploading file : Error ${error.message}`,
+          500
+        )
+      );
+    }
+  });
+
+  const light_information = ['data'];
+  const req_file = { ...req.files.image };
+  light_information.forEach((param) => delete req_file[param]);
+
+  res.status(200).json({
+    message: `Upload a photo for bootcamp`,
+    file_information: req_file,
+    data: `Alert still in progress`,
+  });
 };
