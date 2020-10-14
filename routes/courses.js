@@ -7,10 +7,18 @@ const {
   deleteCourse,
 } = require('../controllers/courses');
 
+const Course = require('../models/Course');
+const advancedQuerying = require('../middleware/advancedquerying');
+
 const router = express.Router();
 
 // Temporary fix
-router.route('/').get(getCourses);
+router
+  .route('/')
+  .get(
+    advancedQuerying(Course, { path: 'bootcamp', select: 'name description' }),
+    getCourses
+  );
 router
   .route('/id/:id')
   .get(getCoursebyId)

@@ -11,11 +11,17 @@ const {
   uploadPhotoforBootcamp,
 } = require('../controllers/bootcamps');
 
-router.route('/').get(getBootcamps).post(createBootcamp);
+const Bootcamp = require('../models/Bootcamp');
+const advancedQuerying = require('../middleware/advancedquerying');
+
+router
+  .route('/')
+  .get(advancedQuerying(Bootcamp, 'Courses'), getBootcamps)
+  .post(createBootcamp);
 
 router
   .route('/:id')
-  .get(getBootcamp)
+  .get(advancedQuerying(Bootcamp, 'Courses'), getBootcamp)
   .put(updateBootcamp)
   .delete(deleteBootcamp);
 

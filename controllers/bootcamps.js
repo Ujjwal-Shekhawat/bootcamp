@@ -10,63 +10,65 @@ const geocoder = require('../utils/geocoder');
 // get all bootcamps
 exports.getBootcamps = async (req, res, next) => {
   try {
-    const removeFeilds = ['select', 'sort', 'page', 'limit'];
-    const req_query = { ...req.query };
-    removeFeilds.forEach((param) => delete req_query[param]);
+    // const removeFeilds = ['select', 'sort', 'page', 'limit'];
+    // const req_query = { ...req.query };
+    // removeFeilds.forEach((param) => delete req_query[param]);
 
-    let query = JSON.stringify(req_query);
+    // let query = JSON.stringify(req_query);
 
-    query = query.replace(/\b(lt|lte|gt|gte|in)\b/g, (match) => `$${match}`);
-    let result = bootcampdb
-      .find(JSON.parse(query))
-      .populate({ path: 'Courses', select: 'scholarShipAvalable' });
+    // query = query.replace(/\b(lt|lte|gt|gte|in)\b/g, (match) => `$${match}`);
+    // let result = bootcampdb
+    //   .find(JSON.parse(query))
+    //   .populate({ path: 'Courses', select: 'scholarShipAvalable' });
 
-    // Selecting specific feilds
-    if (req.query.select) {
-      const feilds = req.query.select.split(',').join(' ');
-      result = result.select(feilds);
-    }
+    // // Selecting specific feilds
+    // if (req.query.select) {
+    //   const feilds = req.query.select.split(',').join(' ');
+    //   result = result.select(feilds);
+    // }
 
-    // Sorting
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      result = result.sort(sortBy);
-    } else {
-      result = result.sort('-createdAt');
-    }
+    // // Sorting
+    // if (req.query.sort) {
+    //   const sortBy = req.query.sort.split(',').join(' ');
+    //   result = result.sort(sortBy);
+    // } else {
+    //   result = result.sort('-createdAt');
+    // }
 
-    // Pagination
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
-    const start = (page - 1) * limit;
-    const end = page * limit;
-    const total = await Bootcamp.countDocuments();
+    // // Pagination
+    // const page = parseInt(req.query.page, 10) || 1;
+    // const limit = parseInt(req.query.limit, 10) || 10;
+    // const start = (page - 1) * limit;
+    // const end = page * limit;
+    // const total = await Bootcamp.countDocuments();
 
-    result = result.skip(start).limit(limit);
+    // result = result.skip(start).limit(limit);
 
-    const allbootcamps = await result;
+    // const allbootcamps = await result;
 
-    let pagination = {};
+    // let pagination = {};
 
-    if (end < total) {
-      pagination.next = {
-        page: page + 1,
-        limit,
-      };
-    }
-    if (start > 0) {
-      pagination.prev = {
-        page: page - 1,
-        limit,
-      };
-    }
+    // if (end < total) {
+    //   pagination.next = {
+    //     page: page + 1,
+    //     limit,
+    //   };
+    // }
+    // if (start > 0) {
+    //   pagination.prev = {
+    //     page: page - 1,
+    //     limit,
+    //   };
+    // }
 
-    res.status(200).json({
-      message: `get all bootcamps`,
-      count: allbootcamps.length,
-      pagination: pagination,
-      data: allbootcamps,
-    });
+    // res.status(200).json({
+    //   message: `get all bootcamps`,
+    //   count: allbootcamps.length,
+    //   pagination: pagination,
+    //   data: allbootcamps,
+    // });
+
+    res.status(200).json(res.advancedQuerying);
   } catch (error) {
     next(error);
   }
@@ -77,14 +79,16 @@ exports.getBootcamps = async (req, res, next) => {
 // get bootcamp by its id
 exports.getBootcamp = async (req, res, next) => {
   try {
-    const bootcampbyid = await bootcampdb.findById(req.params.id);
-    if (bootcampbyid === null) {
-      next(error);
-    }
-    res.status(200).json({
-      message: `get bootcamp by id ${req.params.id}`,
-      data: bootcampbyid,
-    });
+    // const bootcampbyid = await bootcampdb.findById(req.params.id);
+    // if (bootcampbyid === null) {
+    //   next(error);
+    // }
+    // res.status(200).json({
+    //   message: `get bootcamp by id ${req.params.id}`,
+    //   data: bootcampbyid,
+    // });
+
+    res.status(200).json(res.advancedQuerying);
   } catch (error) {
     next(error);
     // res.status(400).json({ message: `Cannot get data from database` });

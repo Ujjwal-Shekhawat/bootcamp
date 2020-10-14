@@ -9,22 +9,25 @@ exports.getCourses = async (req, res, next) => {
   try {
     let query;
     if (req.params.bootcampid) {
-      query = Course.find({ bootcamp: req.params.bootcampid }).populate({
-        path: 'bootcamp',
-        select: 'name _id description',
-      });
+      query = await Course.find({ bootcamp: req.params.bootcampid });
+
+      return res
+        .status(200)
+        .json({ message: `Get courses`, count: query.length, data: query });
     } else {
-      query = Course.find().populate({
-        path: 'bootcamp',
-        select: 'name _id description',
-      });
+      // query = Course.find().populate({
+      //   path: 'bootcamp',
+      //   select: 'name _id description',
+      // });
+
+      return res.status(200).json(res.advancedQuerying);
     }
 
-    const courses = await query;
+    // const courses = await query;
 
-    res
-      .status(200)
-      .json({ message: `Get courses`, count: courses.length, data: courses });
+    // res
+    //   .status(200)
+    //   .json({ message: `Get courses`, count: courses.length, data: courses });
   } catch (error) {
     next(error);
   }
