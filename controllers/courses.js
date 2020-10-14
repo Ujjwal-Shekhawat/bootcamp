@@ -82,7 +82,7 @@ exports.createCourse = async (req, res, next) => {
 };
 
 // PUT
-// privcate
+// private
 // update a course
 exports.updateCourse = async (req, res, next) => {
   try {
@@ -99,5 +99,27 @@ exports.updateCourse = async (req, res, next) => {
     });
 
     res.status(200).json({ message: `update course`, data: course });
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
+};
+
+// DELETE
+// private
+// Delete a course by is id
+exports.deleteCourse = async (req, res, next) => {
+  try {
+    const course = await Course.findById(req.params.id);
+
+    if (!course) {
+      return next(
+        new errorres(`Cannot find course by id : ${req.params.id}`, 404)
+      );
+    }
+    await course.remove();
+
+    res.status(200).json({ message: `Delete course`, data: {} });
+  } catch (error) {
+    next(error);
+  }
 };
