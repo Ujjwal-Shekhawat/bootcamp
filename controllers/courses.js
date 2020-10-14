@@ -30,6 +30,9 @@ exports.getCourses = async (req, res, next) => {
   }
 };
 
+// GET
+// public
+// get course by its id
 exports.getCoursebyId = async (req, res, next) => {
   try {
     const course = await Course.findById(req.params.id);
@@ -47,6 +50,9 @@ exports.getCoursebyId = async (req, res, next) => {
   }
 };
 
+// POST
+// private
+// Create a new course under exsisting bootcamp
 exports.createCourse = async (req, res, next) => {
   try {
     req.body.bootcamp = req.params.bootcampid;
@@ -73,4 +79,25 @@ exports.createCourse = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+// PUT
+// privcate
+// update a course
+exports.updateCourse = async (req, res, next) => {
+  try {
+    let course = await Course.findById(req.params.id);
+
+    if (!course) {
+      return next(
+        new errorres(`Cannot find course by id : ${req.params.id}`, 404)
+      );
+    }
+    course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.status(200).json({ message: `update course`, data: course });
+  } catch (error) {}
 };
