@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const express_fileUpload = require('express-fileupload');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 
@@ -13,6 +14,7 @@ connectDB();
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
 const { connect } = require('mongoose');
+const fileUpload = require('express-fileupload');
 
 const app = express();
 
@@ -25,6 +27,9 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// express middleware for file uploads
+app.use(express_fileUpload);
 
 // Mount Routers
 app.use('/api/v1/bootcamps', bootcamps);
