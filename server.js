@@ -1,5 +1,7 @@
+const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
+const serverindex = require('serve-index');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
 const errorHandler = require('./middleware/error');
@@ -30,6 +32,11 @@ if (process.env.NODE_ENV === 'development') {
 
 // express middleware for file uploads
 app.use(fileupload());
+
+// Static files
+app.use(express.static(path.join(__dirname, 'public')));
+// Serve index
+app.use(`/public`, serverindex(path.join(__dirname, `public`)));
 
 // Mount Routers
 app.use('/api/v1/bootcamps', bootcamps);
