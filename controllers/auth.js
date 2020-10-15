@@ -14,9 +14,13 @@ exports.createUser = async (req, res, next) => {
       role,
     });
 
+    // Token
+    const token = user.getSignedToken();
+
     res.status(200).json({
       message: `Successfully registered user`,
       data: user,
+      token: token,
     });
   } catch (error) {
     next(error);
@@ -26,7 +30,26 @@ exports.createUser = async (req, res, next) => {
 exports.loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    res.status(200).json({ message: `Login user`, data: { email, password } });
+
+    if (!email || !password) {
+      return next(new errorres(`Please enter email and password`, 400));
+    }
+
+    const user = await User.findOne({ email: email }).select('+password');
+
+    if (!user) {
+      return next(new errorres(`Invalid credentials`, 401));
+    }
+
+    const isPasswordCorrect = await user.verifyPassword(password);
+
+    if (!isPasswordCorrect) {
+      return next(new errorres(`Invalid credentials`, 401));
+    }
+
+    const token = user.getSignedToken();
+
+    res.status(200).json({ message: `Login user`, data: user, token: token });
   } catch (error) {
     next(error);
   }
