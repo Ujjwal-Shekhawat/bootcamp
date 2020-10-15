@@ -49,6 +49,7 @@ exports.loginUser = async (req, res, next) => {
       return next(new errorres(`Invalid credentials`, 401));
     }
 
+    // Get signed token
     const token = user.getSignedToken();
 
     res.status(200).json({ message: `Login user`, data: user, token: token });
