@@ -37,10 +37,12 @@ exports.loginUser = async (req, res, next) => {
 
     const user = await User.findOne({ email: email }).select('+password');
 
+    // Check if user exists
     if (!user) {
       return next(new errorres(`Invalid credentials`, 401));
     }
 
+    // Check if the entered password is correct
     const isPasswordCorrect = await user.verifyPassword(password);
 
     if (!isPasswordCorrect) {
