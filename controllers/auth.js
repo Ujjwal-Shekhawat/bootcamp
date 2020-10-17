@@ -15,13 +15,14 @@ exports.createUser = async (req, res, next) => {
     });
 
     // Token
-    const token = user.getSignedToken();
+    // const token = user.getSignedToken();
 
-    res.status(200).json({
-      message: `Successfully registered user`,
-      data: user,
-      token: token,
-    });
+    // res.status(200).json({
+    //   message: `Successfully registered user`,
+    //   data: user,
+    //   token: token,
+    // });
+    sendTokenResponse(user, 200, res);
   } catch (error) {
     next(error);
   }
@@ -49,11 +50,28 @@ exports.loginUser = async (req, res, next) => {
       return next(new errorres(`Invalid credentials`, 401));
     }
 
-    // Get signed token
-    const token = user.getSignedToken();
-
-    res.status(200).json({ message: `Login user`, data: user, token: token });
+    sendTokenResponse(user, 200, res);
   } catch (error) {
     next(error);
   }
+};
+
+const sendTokenResponse = (user, statusCode, response) => {
+  const token = user.getSignedToken();
+
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIR_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === `produnction`) {
+    options.secure = true;
+  }
+
+  response
+    .status(statusCode)
+    .cookie('token', token, options)
+    .json({ message: `Cookies`, token: token });
 };

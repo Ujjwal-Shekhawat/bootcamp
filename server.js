@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
+const cookie_parser = require('cookie-parser');
 const serverindex = require('serve-index');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
@@ -20,6 +21,9 @@ const { connect } = require('mongoose');
 const fileUpload = require('express-fileupload');
 
 const app = express();
+
+// Cookie Parser
+app.use(cookie_parser());
 
 // Middleware
 // body-parser
