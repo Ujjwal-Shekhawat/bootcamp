@@ -7,6 +7,8 @@ const {
   deleteCourse,
 } = require('../controllers/courses');
 
+const { protect } = require('../middleware/auth');
+
 const Course = require('../models/Course');
 const advancedQuerying = require('../middleware/advancedquerying');
 
@@ -22,8 +24,8 @@ router
 router
   .route('/id/:id')
   .get(getCoursebyId)
-  .put(updateCourse)
-  .delete(deleteCourse);
-router.route('/:bootcampid').get(getCourses).post(createCourse);
+  .put(protect, updateCourse)
+  .delete(protect, deleteCourse);
+router.route('/:bootcampid').get(getCourses).post(protect, createCourse);
 
 module.exports = router;
