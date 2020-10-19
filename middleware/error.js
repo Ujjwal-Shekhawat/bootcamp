@@ -9,7 +9,7 @@ const errorHandler = (err, req, res, next) => {
 
   // Bad object id in mongodb
   if (err.name === 'CastError') {
-    const message = `Resorce not found with id of ${err.value}`;
+    const message = `Resource not found`;
     error = new errorres(message, 404);
   }
 
@@ -21,8 +21,8 @@ const errorHandler = (err, req, res, next) => {
 
   // ValidationError
   if (err.name === 'ValidationError') {
-      const message = Object.values(err.errors).map(val => val.message);
-      error = new errorres(message, 400);   
+    const message = Object.values(err.errors).map((val) => val.message);
+    error = new errorres(message, 400);
   }
 
   res
