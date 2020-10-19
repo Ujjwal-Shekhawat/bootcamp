@@ -59,6 +59,7 @@ exports.getCoursebyId = async (req, res, next) => {
 exports.createCourse = async (req, res, next) => {
   try {
     req.body.bootcamp = req.params.bootcampid;
+    req.body.user = req.user.id;
 
     const bootcamp = await Bootcamp.findById(req.params.bootcampid);
     if (bootcamp === null) {
@@ -67,6 +68,16 @@ exports.createCourse = async (req, res, next) => {
         new errorres(
           `No bootcamp found, Cannot create course under non-exsistent bootcamp`,
           400
+        )
+      );
+    }
+
+    // Check if the user is the creator of the bootcamp under which this course is being created
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(
+        new errorres(
+          `User ${req.user.id} is not allowed to add a course to this bootcamp ${bootcamp._id}`,
+          401
         )
       );
     }
@@ -96,6 +107,17 @@ exports.updateCourse = async (req, res, next) => {
         new errorres(`Cannot find course by id : ${req.params.id}`, 404)
       );
     }
+
+    // Check if the user is the creator of the bootcamp under which this course is being created
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(
+        new errorres(
+          `User ${req.user.id} is not allowed to update a course to this bootcamp ${bootcamp._id}`,
+          401
+        )
+      );
+    }
+
     course = await Course.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -119,6 +141,17 @@ exports.deleteCourse = async (req, res, next) => {
         new errorres(`Cannot find course by id : ${req.params.id}`, 404)
       );
     }
+
+    // Check if the user is the creator of the bootcamp under which this course is being created
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(
+        new errorres(
+          `User ${req.user.id} is not allowed to delete a course to this bootcamp ${bootcamp._id}`,
+          401
+        )
+      );
+    }
+
     await course.remove();
 
     res.status(200).json({ message: `Delete course`, data: {} });

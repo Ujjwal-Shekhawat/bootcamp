@@ -166,6 +166,17 @@ exports.deleteBootcamp = async (req, res, next) => {
     if (result === null) {
       return res.status(400).json({ message: `No such bootcamp found` });
     }
+
+    // Check if the user is the creator this bootcamp
+    if (result.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(
+        new errorres(
+          `User ${req.user.id} is not authorized to update this bootcamp : Not the creator`,
+          401
+        )
+      );
+    }
+
     result.remove();
     res.status(200).json({
       message: `delete bootcamp with id ${req.params.id}`,
@@ -211,6 +222,10 @@ exports.uploadPhotoforBootcamp = async (req, res, next) => {
     return next(
       new errorres(`No bootcamp found with id : ${req.params.id}`, 404)
     );
+  }
+
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(new errorres(`User ${req.user.id} is not auth`, 401));
   }
 
   if (!req.files) {
