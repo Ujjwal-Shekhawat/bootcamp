@@ -11,7 +11,7 @@ const {
   uploadPhotoforBootcamp,
 } = require('../controllers/bootcamps');
 
-const { protect } = require('../middleware/auth');
+const { protect, roleAuthorization } = require('../middleware/auth');
 
 const Bootcamp = require('../models/Bootcamp');
 const advancedQuerying = require('../middleware/advancedquerying');
@@ -19,16 +19,22 @@ const advancedQuerying = require('../middleware/advancedquerying');
 router
   .route('/')
   .get(advancedQuerying(Bootcamp, 'Courses'), getBootcamps)
-  .post(protect, createBootcamp);
+  .post(protect, roleAuthorization('publisher', 'admin'), createBootcamp);
 
 router
   .route('/:id')
   .get(advancedQuerying(Bootcamp, 'Courses'), getBootcamp)
-  .put(protect, updateBootcamp)
-  .delete(protect, deleteBootcamp);
+  .put(protect, roleAuthorization('publisher', 'admin'), updateBootcamp)
+  .delete(protect, roleAuthorization('publisher', 'admin'), deleteBootcamp);
 
 router.route('/location/:zipcode/:distance').get(getBootcampsinRadius);
 
-router.route('/:id/uploadimage').put(protect, uploadPhotoforBootcamp);
+router
+  .route('/:id/uploadimage')
+  .put(
+    protect,
+    roleAuthorization('publisher', 'admin'),
+    uploadPhotoforBootcamp
+  );
 
 module.exports = router;

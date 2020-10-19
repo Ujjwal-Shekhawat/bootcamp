@@ -75,3 +75,13 @@ const sendTokenResponse = (user, statusCode, response) => {
     .cookie('token', token, options)
     .json({ message: `Cookies`, token: token });
 };
+
+exports.getMe = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    res.status(200).json({ message: `Get current user`, data: user });
+  } catch (error) {
+    next(error);
+  }
+};
