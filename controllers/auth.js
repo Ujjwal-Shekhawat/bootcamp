@@ -158,3 +158,39 @@ exports.resetPassword = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.updateUser = async (req, res, next) => {
+  try {
+    const feildsToUpdate = {
+      name: req.body.name,
+      email: req.body.email,
+    };
+
+    const user = await User.findByIdAndUpdate(req.user.id, feildsToUpdate, {
+      new: true,
+      runValidators: true,
+    });
+
+    res
+      .status(200)
+      .json({ message: `Update user (email and name only)`, data: user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updatePassword = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select('+password');
+
+    // Check current password
+    if (!(await user.verifyPassword(req.body.currentPassword))) {
+      return next(new errorres(`Password is incorrect`, 401));
+    }
+
+    user.password = req.body.newPassword;
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
+  } catch (error) {}
+};
