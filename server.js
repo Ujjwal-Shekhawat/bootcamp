@@ -3,6 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cookie_parser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
 const serverindex = require('serve-index');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
@@ -43,6 +44,9 @@ app.use(fileupload());
 // Security middlewares
 // sanitize data to prevent noSql attacks
 app.use(mongoSanitize());
+
+// Use helmet for more secure and efficient headers
+app.use(helmet());
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
