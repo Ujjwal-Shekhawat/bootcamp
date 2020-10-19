@@ -127,7 +127,26 @@ exports.createBootcamp = async (req, res, next) => {
 // update bootcamp by its id
 exports.updateBootcamp = async (req, res, next) => {
   try {
-    const data = await Bootcamp.findByIdAndUpdate(req.params.id, req.body);
+    let data = await Bootcamp.findById(req.params.id);
+
+    if (!data) {
+    }
+
+    // Check if the user is the creator this bootcamp
+    if (data.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(
+        new errorres(
+          `User ${req.user.id} is not authorized to update this bootcamp : Not the creator`,
+          401
+        )
+      );
+    }
+
+    data = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
     res.status(200).json({
       message: `update bootcamp with id ${req.params.id}`,
       data: data,
