@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const cookie_parser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
+const xss = require('xss-clean');
 const serverindex = require('serve-index');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
@@ -47,6 +48,9 @@ app.use(mongoSanitize());
 
 // Use helmet for more secure and efficient headers
 app.use(helmet());
+
+// Prevent cross site scripting
+app.use(xss());
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
