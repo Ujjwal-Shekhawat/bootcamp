@@ -65,7 +65,7 @@ app.use(limiter);
 // hpp (Hyper paramater pollution)
 app.use(hpp());
 
-// CORS
+// Enable cors
 app.use(cors());
 
 // Static files
