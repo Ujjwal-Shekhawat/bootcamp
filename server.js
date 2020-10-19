@@ -5,6 +5,7 @@ const cookie_parser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const xss = require('xss-clean');
+const rateLimit = require('express-rate-limiter');
 const serverindex = require('serve-index');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
@@ -51,6 +52,13 @@ app.use(helmet());
 
 // Prevent cross site scripting
 app.use(xss());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMS: 10 * 60 * 1000 /* 10 minutes */,
+  max: 100,
+});
+app.use(limiter);
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
