@@ -18,3 +18,25 @@ exports.getReviews = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.createReview = async (req, res, next) => {
+  try {
+    req.body.bootcamp = req.params.bootcampid;
+    req.body.user = req.user.id;
+
+    const bootcamp = await Bootcamp.findById(req.params.bootcampid);
+
+    if (!bootcamp) {
+      return next(
+        new errorres(
+          `No such bootcamp found with id ${req.params.bootcampid}`,
+          404
+        )
+      );
+    }
+
+    const review = await Review.create(req.body);
+
+    res.status(200).json({ message: `Create review`, data: review });
+  } catch (error) {}
+};
