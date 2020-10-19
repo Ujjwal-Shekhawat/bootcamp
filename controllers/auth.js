@@ -192,5 +192,7 @@ exports.updatePassword = async (req, res, next) => {
     await user.save();
 
     sendTokenResponse(user, 200, res);
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
