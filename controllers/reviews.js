@@ -40,7 +40,7 @@ exports.createReview = async (req, res, next) => {
       user: req.user.id,
       bootcamp: req.params.bootcampid,
     });
-    if (given && false) {
+    if (given) {
       return next(
         new errorres(
           `This user has already submitted a review for this bootcamp cannot submit more than one review`,
@@ -52,5 +52,79 @@ exports.createReview = async (req, res, next) => {
     const review = await Review.create(req.body);
 
     res.status(200).json({ message: `Create review`, data: review });
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateReview = async (req, res, next) => {
+  try {
+    const bootcamp = await Bootcamp.findById(req.params.bootcampid);
+
+    if (!bootcamp) {
+      return next(
+        new errorres(
+          `No such bootcamp found with id ${req.params.bootcampid}`,
+          404
+        )
+      );
+    }
+
+    // Check if the user has submitted a review on this site
+    const given = await Review.findOne({
+      user: req.user.id,
+      bootcamp: req.params.bootcampid,
+    });
+    if (!given) {
+      return next(
+        new errorres(
+          `There is no review found given by this user for this bootcamp`,
+          400
+        )
+      );
+    }
+
+    // Not properly returning new data
+    const review = await Review.findOneAndUpdate(
+      { user: req.user.id, bootcamp: req.params.bootcampid },
+      { title: req.body.title, text: req.body.text, rating: req.body.rating },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({ message: `Update review`, data: review });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.deleteReview = async (req, res, next) => {
+  try {
+    const bootcamp = await Bootcamp.findById(req.params.bootcampid);
+
+    if (!bootcamp) {
+      return next(
+        new errorres(
+          `No such bootcamp found with id ${req.params.bootcampid}`,
+          404
+        )
+      );
+    }
+
+    // Check if the user has submitted a review on this site
+    const given = await Review.findOne({
+      user: req.user.id,
+      bootcamp: req.params.bootcampid,
+    });
+    if (!given) {
+      return next(
+        new errorres(`no reviews found by this user on this bootcamp`, 404)
+      );
+    }
+
+    given.remove();
+
+    res.status(200).json({ message: `Delete review`, data: {} });
+  } catch (error) {
+    next(error);
+  }
 };
