@@ -36,8 +36,11 @@ exports.createReview = async (req, res, next) => {
     }
 
     // Check if the user has submitted a review on this site
-    const given = await Review.findOne({ user: req.user.id, bootcamp: req.params.bootcampid });
-    if (given) {
+    const given = await Review.findOne({
+      user: req.user.id,
+      bootcamp: req.params.bootcampid,
+    });
+    if (given && false) {
       return next(
         new errorres(
           `This user has already submitted a review for this bootcamp cannot submit more than one review`,
