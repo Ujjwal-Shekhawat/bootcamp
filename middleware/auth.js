@@ -13,9 +13,9 @@ exports.protect = async (req, res, next) => {
   }
 
   // Will be implementing later in production mode
-  // else if (req.cookies.token) {
-  //   token = req.cookies.token;
-  // }
+  else if (req.cookies.token) {
+    token = req.cookies.token;
+  }
 
   if (!token) {
     return next(new errorres(`Not authorized to access this route`), 401);
