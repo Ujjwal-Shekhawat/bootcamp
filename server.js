@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 const cookie_parser = require('cookie-parser');
+const mongoSanitize = require('express-mongo-sanitize');
 const serverindex = require('serve-index');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
@@ -38,6 +39,10 @@ if (process.env.NODE_ENV === 'development') {
 
 // express middleware for file uploads
 app.use(fileupload());
+
+// Security middlewares
+// sanitize data to prevent noSql attacks
+app.use(mongoSanitize);
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
