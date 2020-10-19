@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const rateLimit = require('express-rate-limiter');
 const hpp = reuire('hpp');
+const cors = require('cors');
 const serverindex = require('serve-index');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
@@ -63,6 +64,9 @@ app.use(limiter);
 
 // hpp (Hyper paramater pollution)
 app.use(hpp());
+
+// CORS
+app.use(cors());
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
