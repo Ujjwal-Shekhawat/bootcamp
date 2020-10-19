@@ -42,7 +42,7 @@ app.use(fileupload());
 
 // Security middlewares
 // sanitize data to prevent noSql attacks
-app.use(mongoSanitize); 
+app.use(mongoSanitize);
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
