@@ -6,6 +6,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const xss = require('xss-clean');
 const rateLimit = require('express-rate-limiter');
+const hpp = reuire('hpp');
 const serverindex = require('serve-index');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
@@ -59,6 +60,9 @@ const limiter = rateLimit({
   max: 100,
 });
 app.use(limiter);
+
+// hpp (Hyper paramater pollution)
+app.use(hpp());
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
