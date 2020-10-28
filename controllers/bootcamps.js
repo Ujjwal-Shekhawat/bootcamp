@@ -177,6 +177,7 @@ exports.deleteBootcamp = async (req, res, next) => {
       );
     }
 
+    // remove will hepl us to run pre middleware in BootcampSchema that will also remove all the courses associated with it
     result.remove();
     res.status(200).json({
       message: `delete bootcamp with id ${req.params.id}`,

@@ -5,8 +5,8 @@ const cookie_parser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const xss = require('xss-clean');
-const rateLimit = require('express-rate-limiter');
-const hpp = reuire('hpp');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
 const cors = require('cors');
 const serverindex = require('serve-index');
 const morgan = require('morgan');
@@ -57,7 +57,7 @@ app.use(xss());
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMS: 10 * 60 * 1000 /* 10 minutes */,
+  windowMs: 10 * 60 * 1000 /* 10 minutes */,
   max: 100,
 });
 app.use(limiter);
